@@ -1,0 +1,24 @@
+import "./App.css";
+import { useState } from "react";
+
+function MyComponent3() {
+  
+  const [ count, setCount ] = useState(0);
+  const [ count2, setCount2 ] = useState(0);
+
+  // count, count2 한번에 증가시키는 함수
+  const increment = () => {
+    setCount(count +1);   // 얘가 먼저 호출될거니까 얘의 상태가 바뀔 때 리랜더링이 일어나야하지 않는가
+    setCount2(count2 +1); // 사실은 얘까지 호출되고 나서 랜더링은 한번만 일어난다.
+    // 전체 함수가 호출 된 후에 변경된 값이 있으면 랜더링을 한번만 함.
+  }
+
+  return(
+    <>
+      <p>현재 값 : {count} ⭐ {count2}</p>
+      <button onClick={increment}>증가</button>
+    </>
+  );
+}
+
+export default MyComponent3;
