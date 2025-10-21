@@ -11,7 +11,7 @@ function App() {
   // 최초 랜더링 시에 url 기준으로 get요청을 함
   // 우리가 필요한 부분만 뽑아내서 집어넣음
   useEffect(() => {
-    fetch('https://api.openweathermap.org/data/2.5/weather?q=Busan&units=Metric&APIkey=ce44224452dbcce3f60158593d1add17')
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=Busan&units=Metric&APIkey=')
     .then(response => response.json())
     .then(result => {
       setWeather({
