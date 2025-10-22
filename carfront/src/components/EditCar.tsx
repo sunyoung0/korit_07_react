@@ -1,9 +1,10 @@
 import { ChangeEvent, useState } from "react";
 import { Car, CarResponse, CarEntity } from "../types";
-import { Dialog, DialogActions, DialogTitle, Button } from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, Button, IconButton, Tooltip } from "@mui/material";
 import CarDialogContent from "./CarDialogContent";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateCar } from "../api/carapi";
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
 // 수정할 떈 id값이 있는것을 가져와서 수정해야하기때문에 CarResponse를 가져옴.
 type FormProps = {
@@ -73,7 +74,11 @@ function EditCar( {cardata} : FormProps) {
 
   return (
     <>
-      <Button onClick={handleClickOpen}>Edit</Button>
+      <Tooltip title="Edit car" >
+        <IconButton aria-label="edit" size="small" onClick={handleClickOpen}>
+          <EditRoundedIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
       <Dialog open={open} onClose={handleClickClose}>
         <DialogTitle>Edit Car</DialogTitle>
         <CarDialogContent car={car} handleChange={handleChange}/>
