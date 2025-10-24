@@ -1,20 +1,32 @@
-import { Button, TextField, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Button, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
-import { Item } from "./types";
+import { Item, ItemEntity, ItemResponse } from "./types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addItem } from "./api/itemapi";
+import { updateItem } from "./api/itemapi";
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
-function AddItem() {
+type FormProps = {
+  itemdata: ItemResponse
+}
+
+function EditItem ( {itemdata} : FormProps) {
+  const queryClient = useQueryClient();
 
   const [ open, setOpen ] = useState(false);
+
   const [ item, setItem ] = useState<Item>({
     product: '',
     amount: '',
   });
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const handleOpen = () => {
+    setItem({
+      product: itemdata.product,
+      amount: itemdata.amount
+    })
+    
     setOpen(true);
   }
 
@@ -22,7 +34,7 @@ function AddItem() {
     setOpen(false);
   }
 
-  const { mutate } = useMutation(addItem, {
+  const { mutate } = useMutation(updateItem, {
     onSuccess: () => {
       queryClient.invalidateQueries(["items"]);
     },
@@ -32,7 +44,11 @@ function AddItem() {
   })
 
   const handleSave = () => {
-    mutate(item);
+    const url = itemdata._links.self.href;
+    const itemEntity: ItemEntity = { item, url };
+
+    mutate(itemEntity);
+
     setItem({
       product: '',
       amount: ''
@@ -42,11 +58,13 @@ function AddItem() {
 
   return(
     <>
-      <Button onClick={handleOpen} variant="outlined">
-        Add Item
-      </Button>
+      <Tooltip title="Edit car" >
+        <IconButton aria-label="edit" size="small" onClick={handleOpen}>
+          <EditRoundedIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
       <Dialog open={open} onClose={handleClose} >
-        <DialogTitle>New Item</DialogTitle>
+        <DialogTitle>Edit Item</DialogTitle>
         <DialogContent>
           <TextField value={item.product} margin="dense" onChange={e => setItem({...item, product:e.target.value})} label="Product/제품명" fullWidth />
           <TextField value={item.amount} margin="dense" onChange={e => setItem({...item, amount:e.target.value})} label="amount/수량" fullWidth/>
@@ -55,11 +73,11 @@ function AddItem() {
           Cancel / 취소
         </Button>
         <Button onClick={handleSave}>
-          Add / 저장
+          Edit / 수정
         </Button>
       </Dialog>
     </>
   );
 }
 
-export default AddItem;
+export default EditItem;

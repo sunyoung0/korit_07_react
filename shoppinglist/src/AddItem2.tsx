@@ -1,18 +1,18 @@
 import { Button, TextField, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
 import { Item } from "./types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addItem } from "./api/itemapi";
 
-function AddItem() {
+type AddItemProps = {
+  addItem: (item: Item) => void;
+}
+
+function AddItem(props: AddItemProps) {
 
   const [ open, setOpen ] = useState(false);
   const [ item, setItem ] = useState<Item>({
     product: '',
     amount: '',
   });
-
-  const queryClient = useQueryClient();
 
   const handleOpen = () => {
     setOpen(true);
@@ -22,21 +22,11 @@ function AddItem() {
     setOpen(false);
   }
 
-  const { mutate } = useMutation(addItem, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["items"]);
-    },
-    onError: err => {
-      console.log(err);
-    }
-  })
-
-  const handleSave = () => {
-    mutate(item);
-    setItem({
-      product: '',
-      amount: ''
-    });
+  // App.tsx의 addItem 함수를 호출하고 item 상태를 전달
+  const addItem = () => {
+    props.addItem(item);
+    // TextField에 있는 내용을 다 지우고 Modal을 닫음
+    setItem({product: '', amount:''});
     handleClose();
   }
 
@@ -54,7 +44,7 @@ function AddItem() {
         <Button onClick={handleClose}>
           Cancel / 취소
         </Button>
-        <Button onClick={handleSave}>
+        <Button onClick={addItem}>    {/* App.tsx의 addItem */}
           Add / 저장
         </Button>
       </Dialog>
